@@ -36,8 +36,9 @@ export const listServices = async (): Promise<ServiceRead[]> => {
       author: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          username: true,
+          email: true,
+          password: true,
         },
       },
     },
@@ -60,8 +61,9 @@ export const getService = async (id: number): Promise<ServiceRead | null> => {
       author: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          username: true,
+          email: true,
+          password: true,
         },
       },
     },
@@ -96,8 +98,9 @@ export const createService = async (
       author: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          username: true,
+          email: true,
+          password: true,
         },
       },
     },
@@ -134,8 +137,9 @@ export const updateService = async (
       author: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          username: true,
+          email: true,
+          password: true,
         },
       },
     },

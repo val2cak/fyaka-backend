@@ -34,8 +34,8 @@ userRouter.get('/:id', async (request: Request, response: Response) => {
 // Params: firstName, lastName
 userRouter.post(
   '/',
-  body('firstName').isString(),
-  body('lastName').isString(),
+  body('username').isString(),
+  body('email').isString(),
   async (request: Request, response: Response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
@@ -55,8 +55,8 @@ userRouter.post(
 // Params: firstName, lastName
 userRouter.put(
   '/:id',
-  body('firstName').isString(),
-  body('lastName').isString(),
+  body('username').isString(),
+  body('email').isString(),
   async (request: Request, response: Response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
