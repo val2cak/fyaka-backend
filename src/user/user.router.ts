@@ -59,52 +59,52 @@ const loginValidators = [
 userRouter.post(
   '/login',
   loginValidators,
-  async (request: Request, response: Response) => {
-    const errors = validationResult(request);
+  async (req: Request, res: Response) => {
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return response.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ errors: errors.array() });
     }
     try {
-      const { username, password } = request.body;
+      const { username, password } = req.body;
       const user = await UserService.getUserByUsername(username);
       if (!user) {
-        return response.status(401).json({ error: `User doesn't exist!` });
+        return res.status(401).json({ error: `User doesn't exist!` });
       }
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return response.status(401).json({ error: 'Incorrect password!' });
+        return res.status(401).json({ error: 'Incorrect password!' });
       }
       const token = jwt.sign({ id: user.id }, JWT_SECRET, {
         expiresIn: '1h',
       });
-      return response.status(200).json({ token });
+      return res.status(200).json({ token });
     } catch (error: any) {
-      return response.status(500).json(error.message);
+      return res.status(500).json(error.message);
     }
   }
 );
 
 // GET: List of all Users
-userRouter.get('/', async (request: Request, response: Response) => {
+userRouter.get('/', async (req: Request, res: Response) => {
   try {
     const users = await UserService.listUsers();
-    return response.status(200).json(users);
+    return res.status(200).json(users);
   } catch (error: any) {
-    return response.status(500).json(error.message);
+    return res.status(500).json(error.message);
   }
 });
 
 // GET: A single User by ID
-userRouter.get('/:id', async (request: Request, response: Response) => {
-  const id: number = parseInt(request.params.id, 10);
+userRouter.get('/:id', async (req: Request, res: Response) => {
+  const id: number = parseInt(req.params.id, 10);
   try {
     const user = await UserService.getUser(id);
     if (user) {
-      return response.status(200).json(user);
+      return res.status(200).json(user);
     }
-    return response.status(404).json('User could not be found');
+    return res.status(404).json('User could not be found');
   } catch (error: any) {
-    return response.status(500).json(error.message);
+    return res.status(500).json(error.message);
   }
 });
 
@@ -114,29 +114,29 @@ userRouter.put(
   '/:id',
   body('username').isString(),
   body('email').isString(),
-  async (request: Request, response: Response) => {
-    const errors = validationResult(request);
+  async (req: Request, res: Response) => {
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return response.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ errors: errors.array() });
     }
-    const id: number = parseInt(request.params.id, 10);
+    const id: number = parseInt(req.params.id, 10);
     try {
-      const user = request.body;
+      const user = req.body;
       const updatedUser = await UserService.updateUser(user, id);
-      return response.status(200).json(updatedUser);
+      return res.status(200).json(updatedUser);
     } catch (error: any) {
-      return response.status(500).json(error.message);
+      return res.status(500).json(error.message);
     }
   }
 );
 
 // DELETE: Delete a User based on the id
-userRouter.delete('/:id', async (request: Request, response: Response) => {
-  const id: number = parseInt(request.params.id, 10);
+userRouter.delete('/:id', async (req: Request, res: Response) => {
+  const id: number = parseInt(req.params.id, 10);
   try {
     await UserService.deleteUser(id);
-    return response.status(204).json('User has been successfully deleted');
+    return res.status(204).json('User has been successfully deleted');
   } catch (error: any) {
-    return response.status(500).json(error.message);
+    return res.status(500).json(error.message);
   }
 });

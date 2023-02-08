@@ -1,95 +1,80 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
+import { check, validationResult } from 'express-validator';
 
 import * as ServiceService from './service.service';
 
-export const serviceRouter = express.Router();
+const router = express.Router();
 
-// GET: List of all Services
-serviceRouter.get('/', async (request: Request, response: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
     const services = await ServiceService.listServices();
-    return response.status(200).json(services);
+    return res.status(200).json(services);
   } catch (error: any) {
-    return response.status(500).json(error.message);
+    return res.status(500).json(error.message);
   }
 });
 
-// GET: A single Service by ID
-serviceRouter.get('/:id', async (request: Request, response: Response) => {
-  const id: number = parseInt(request.params.id, 10);
+router.get('/:id', async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id, 10);
   try {
     const service = await ServiceService.getService(id);
     if (service) {
-      return response.status(200).json(service);
+      return res.status(200).json(service);
     }
-    return response.status(404).json('Service could not be found');
+    return res.status(404).json('Service could not be found');
   } catch (error: any) {
-    return response.status(500).json(error.message);
+    return res.status(500).json(error.message);
   }
 });
 
-// POST: Create a Service
-// Params: title, description, location, price, date, people, authorId
-serviceRouter.post(
-  '/',
-  body('title').isString(),
-  body('description').isString(),
-  body('location').isString(),
-  body('price').isInt(),
-  body('date').isDate().toDate(),
-  body('people').isInt(),
-  body('authorId').isInt(),
-  async (request: Request, response: Response) => {
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-      return response.status(400).json({ errors: errors.array() });
-    }
-    try {
-      const service = request.body;
-      const newService = await ServiceService.createService(service);
-      return response.status(201).json(newService);
-    } catch (error: any) {
-      return response.status(500).json(error.message);
-    }
-  }
-);
+const validateService = [
+  check('title').isString(),
+  check('description').isString(),
+  check('location').isString(),
+  check('price').isInt(),
+  check('date').isISO8601(),
+  check('people').isInt(),
+  check('authorId').isInt(),
+];
 
-// PUT: Updating a User
-// Params: title, description, location, price, date, people, authorId
-serviceRouter.put(
-  '/:id',
-  body('title').isString(),
-  body('description').isString(),
-  body('location').isString(),
-  body('price').isInt(),
-  body('date').isDate().toDate(),
-  body('people').isInt(),
-  body('authorId').isInt(),
-  async (request: Request, response: Response) => {
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-      return response.status(400).json({ errors: errors.array() });
-    }
-    const id: number = parseInt(request.params.id, 10);
-    try {
-      const service = request.body;
-      const updatedService = await ServiceService.updateService(service, id);
-      return response.status(201).json(updatedService);
-    } catch (error: any) {
-      return response.status(500).json(error.message);
-    }
+router.post('/', validateService, async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-);
+  try {
+    const service = req.body;
+    const newService = await ServiceService.createService(service);
+    return res.status(201).json(newService);
+  } catch (error: any) {
+    return res.status(500).json(error.message);
+  }
+});
 
-// DELETE: Delete a Service based on the id
-serviceRouter.delete('/:id', async (request: Request, response: Response) => {
-  const id: number = parseInt(request.params.id, 10);
+router.put('/:id', validateService, async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  const id = parseInt(req.params.id, 10);
+  try {
+    const service = req.body;
+    const updatedService = await ServiceService.updateService(service, id);
+    return res.status(201).json(updatedService);
+  } catch (error: any) {
+    return res.status(500).json(error.message);
+  }
+});
+
+router.delete('/:id', async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id, 10);
   try {
     await ServiceService.deleteService(id);
-    return response.status(204).json('Service has been successfully deleted');
+    return res.status(204).json('Service has been successfully deleted');
   } catch (error: any) {
-    return response.status(500).json(error.message);
+    return res.status(500).json(error.message);
   }
 });
+
+export { router as serviceRouter };

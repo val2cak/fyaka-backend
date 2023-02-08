@@ -9,8 +9,7 @@ type ServiceRead = {
   price: number;
   date: Date;
   people: number;
-  author: User;
-  //   authorId: number;
+  author: Omit<User, 'password'>;
 };
 
 type ServiceWrite = {
@@ -23,50 +22,31 @@ type ServiceWrite = {
   authorId: number;
 };
 
-export const listServices = async (): Promise<ServiceRead[]> => {
-  return db.service.findMany({
+const selectService = {
+  id: true,
+  title: true,
+  description: true,
+  location: true,
+  price: true,
+  date: true,
+  people: true,
+  author: {
     select: {
       id: true,
-      title: true,
-      description: true,
-      location: true,
-      price: true,
-      date: true,
-      people: true,
-      author: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          password: true,
-        },
-      },
+      username: true,
+      email: true,
     },
-  });
+  },
+};
+
+export const listServices = async (): Promise<ServiceRead[]> => {
+  return db.service.findMany({ select: selectService });
 };
 
 export const getService = async (id: number): Promise<ServiceRead | null> => {
   return db.service.findUnique({
-    where: {
-      id,
-    },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      location: true,
-      price: true,
-      date: true,
-      people: true,
-      author: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          password: true,
-        },
-      },
-    },
+    where: { id },
+    select: selectService,
   });
 };
 
@@ -75,35 +55,9 @@ export const createService = async (
 ): Promise<ServiceRead> => {
   const { title, description, location, price, date, people, authorId } =
     service;
-  const parsedDate: Date = new Date(date);
-
   return db.service.create({
-    data: {
-      title,
-      description,
-      location,
-      price,
-      date: parsedDate,
-      people,
-      authorId,
-    },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      location: true,
-      price: true,
-      date: true,
-      people: true,
-      author: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          password: true,
-        },
-      },
-    },
+    data: { title, description, location, price, date, people, authorId },
+    select: selectService,
   });
 };
 
@@ -114,42 +68,12 @@ export const updateService = async (
   const { title, description, location, price, date, people, authorId } =
     service;
   return db.service.update({
-    where: {
-      id,
-    },
-    data: {
-      title,
-      description,
-      location,
-      price,
-      date,
-      people,
-      authorId,
-    },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      location: true,
-      price: true,
-      date: true,
-      people: true,
-      author: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          password: true,
-        },
-      },
-    },
+    where: { id },
+    data: { title, description, location, price, date, people, authorId },
+    select: selectService,
   });
 };
 
 export const deleteService = async (id: number): Promise<void> => {
-  await db.service.delete({
-    where: {
-      id,
-    },
-  });
+  await db.service.delete({ where: { id } });
 };
