@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import * as UserService from './user.service';
-import { JWT_SECRET } from '../config/config';
+import { JWT_SECRET } from '../../config/config';
 
 export const userRouter = express.Router();
 
@@ -26,6 +26,11 @@ userRouter.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
+    const user = await UserService.getUserByEmail(req.body.email);
+    if (user) {
+      return res.status(401).json({ error: `User already registered!` });
+    }
+
     try {
       const { username, email, password } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -34,7 +39,10 @@ userRouter.post(
         email,
         password: hashedPassword,
       });
-      return res.status(201).json(newUser);
+
+      return res
+        .status(201)
+        .json(`User ${newUser.username} registered successfully!`);
     } catch (error: any) {
       return res.status(500).json({ error: error.message });
     }
@@ -60,16 +68,16 @@ userRouter.post(
       const { username, password } = request.body;
       const user = await UserService.getUserByUsername(username);
       if (!user) {
-        return response.status(401).json({ error: 'Invalid credentials' });
+        return response.status(401).json({ error: `User doesn't exist!` });
       }
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return response.status(401).json({ error: 'Invalid credentials' });
+        return response.status(401).json({ error: 'Incorrect password!' });
       }
       const token = jwt.sign({ id: user.id }, JWT_SECRET, {
         expiresIn: '1h',
       });
-      return response.status(200).json({ token, user });
+      return response.status(200).json({ token });
     } catch (error: any) {
       return response.status(500).json(error.message);
     }
@@ -77,7 +85,7 @@ userRouter.post(
 );
 
 // GET: List of all Users
-userRouter.get('/', async (response: Response) => {
+userRouter.get('/', async (request: Request, response: Response) => {
   try {
     const users = await UserService.listUsers();
     return response.status(200).json(users);

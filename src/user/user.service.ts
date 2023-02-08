@@ -14,8 +14,10 @@ const selectUserFields = {
   password: true,
 };
 
-export const listUsers = async (): Promise<User[]> => {
-  return db.user.findMany({ select: selectUserFields });
+export const listUsers = async (): Promise<
+  Omit<User, 'email' | 'password'>[]
+> => {
+  return db.user.findMany({ select: { id: true, username: true } });
 };
 
 export const getUser = async (id: number): Promise<User | null> => {
@@ -30,6 +32,10 @@ export const getUserByUsername = async (
   username: string
 ): Promise<User | null> => {
   return db.user.findFirst({ where: { username }, select: selectUserFields });
+};
+
+export const getUserByEmail = async (email: string): Promise<User | null> => {
+  return db.user.findFirst({ where: { email }, select: selectUserFields });
 };
 
 export const updateUser = async (
