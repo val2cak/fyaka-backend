@@ -1,13 +1,83 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 import * as UserService from './user.service';
+import { JWT_SECRET } from '../config/config';
 
 export const userRouter = express.Router();
 
+const registerValidators = [
+  body('username').isString(),
+  body('email').isEmail(),
+  body('password').isLength({ min: 8 }),
+];
+
+// POST: Register a User
+// Params: username, email, password
+userRouter.post(
+  '/register',
+  registerValidators,
+  async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { username, email, password } = req.body;
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = await UserService.createUser({
+        username,
+        email,
+        password: hashedPassword,
+      });
+      return res.status(201).json(newUser);
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+const loginValidators = [
+  body('username').isString(),
+  body('password').isLength({ min: 8 }),
+];
+
+// POST: Login a User
+// Params: username, password
+userRouter.post(
+  '/login',
+  loginValidators,
+  async (request: Request, response: Response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response.status(400).json({ errors: errors.array() });
+    }
+    try {
+      const { username, password } = request.body;
+      const user = await UserService.getUserByUsername(username);
+      if (!user) {
+        return response.status(401).json({ error: 'Invalid credentials' });
+      }
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return response.status(401).json({ error: 'Invalid credentials' });
+      }
+      const token = jwt.sign({ id: user.id }, JWT_SECRET, {
+        expiresIn: '1h',
+      });
+      return response.status(200).json({ token, user });
+    } catch (error: any) {
+      return response.status(500).json(error.message);
+    }
+  }
+);
+
 // GET: List of all Users
-userRouter.get('/', async (request: Request, response: Response) => {
+userRouter.get('/', async (response: Response) => {
   try {
     const users = await UserService.listUsers();
     return response.status(200).json(users);
@@ -29,27 +99,6 @@ userRouter.get('/:id', async (request: Request, response: Response) => {
     return response.status(500).json(error.message);
   }
 });
-
-// POST: Create a User
-// Params: firstName, lastName
-userRouter.post(
-  '/',
-  body('username').isString(),
-  body('email').isString(),
-  async (request: Request, response: Response) => {
-    const errors = validationResult(request);
-    if (!errors.isEmpty()) {
-      return response.status(400).json({ errors: errors.array() });
-    }
-    try {
-      const user = request.body;
-      const newUser = await UserService.createUser(user);
-      return response.status(201).json(newUser);
-    } catch (error: any) {
-      return response.status(500).json(error.message);
-    }
-  }
-);
 
 // PUT: Updating a User
 // Params: firstName, lastName

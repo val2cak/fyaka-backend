@@ -7,71 +7,42 @@ export type User = {
   password: string;
 };
 
+const selectUserFields = {
+  id: true,
+  username: true,
+  email: true,
+  password: true,
+};
+
 export const listUsers = async (): Promise<User[]> => {
-  return db.user.findMany({
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      password: true,
-    },
-  });
+  return db.user.findMany({ select: selectUserFields });
 };
 
 export const getUser = async (id: number): Promise<User | null> => {
-  return db.user.findUnique({
-    where: {
-      id,
-    },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      password: true,
-    },
-  });
+  return db.user.findUnique({ where: { id }, select: selectUserFields });
 };
 
 export const createUser = async (user: Omit<User, 'id'>): Promise<User> => {
-  const { username, email, password } = user;
-  return db.user.create({
-    data: { username, email, password },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      password: true,
-    },
-  });
+  return db.user.create({ data: user, select: selectUserFields });
+};
+
+export const getUserByUsername = async (
+  username: string
+): Promise<User | null> => {
+  return db.user.findFirst({ where: { username }, select: selectUserFields });
 };
 
 export const updateUser = async (
   user: Omit<User, 'id'>,
   id: number
 ): Promise<User> => {
-  const { username, email, password } = user;
   return db.user.update({
-    where: {
-      id,
-    },
-    data: {
-      username,
-      email,
-      password,
-    },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      password: true,
-    },
+    where: { id },
+    data: user,
+    select: selectUserFields,
   });
 };
 
 export const deleteUser = async (id: number): Promise<void> => {
-  await db.user.delete({
-    where: {
-      id,
-    },
-  });
+  await db.user.delete({ where: { id } });
 };
