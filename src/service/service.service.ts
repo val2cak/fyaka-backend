@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { User } from '../user/user.service';
 import { db } from '../utils/db.server';
 
@@ -39,8 +40,13 @@ const selectService = {
   },
 };
 
-export const listServices = async (): Promise<ServiceRead[]> => {
-  return db.service.findMany({ select: selectService });
+export const listServices = async (
+  authorId?: number
+): Promise<ServiceRead[]> => {
+  const where: Prisma.ServiceWhereInput | undefined = authorId
+    ? { author: { id: { equals: authorId } } }
+    : undefined;
+  return db.service.findMany({ where, select: selectService });
 };
 
 export const getService = async (id: number): Promise<ServiceRead | null> => {

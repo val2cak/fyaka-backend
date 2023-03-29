@@ -8,7 +8,10 @@ const router = express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const services = await ServiceService.listServices();
+    const authorId = req.query.authorId
+      ? parseInt(req.query.authorId as string, 10)
+      : undefined;
+    const services = await ServiceService.listServices(authorId);
     return res.status(200).json(services);
   } catch (error: any) {
     return res.status(500).json(error.message);

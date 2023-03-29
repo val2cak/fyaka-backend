@@ -77,7 +77,8 @@ userRouter.post(
       const token = jwt.sign({ id: user.id }, JWT_SECRET, {
         expiresIn: '1h',
       });
-      return res.status(200).json({ token });
+      const userData = { id: user.id, username: user.username };
+      return res.status(200).json({ token, user: userData });
     } catch (error: any) {
       return res.status(500).json(error.message);
     }
