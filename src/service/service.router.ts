@@ -11,8 +11,17 @@ router.get('/', async (req: Request, res: Response) => {
     const authorId = req.query.authorId
       ? parseInt(req.query.authorId as string, 10)
       : undefined;
-    const services = await ServiceService.listServices(authorId);
-    return res.status(200).json(services);
+    const pageSize = req.query.pageSize
+      ? parseInt(req.query.pageSize as string, 10)
+      : 6;
+    const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+    const skip = (page - 1) * pageSize;
+    const [services, totalCount] = await Promise.all([
+      ServiceService.listServices(authorId, skip, pageSize),
+      ServiceService.countServices(authorId),
+    ]);
+    const totalPages = Math.ceil(totalCount / pageSize);
+    return res.status(200).json({ services, totalPages });
   } catch (error: any) {
     return res.status(500).json(error.message);
   }

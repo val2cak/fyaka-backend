@@ -41,12 +41,21 @@ const selectService = {
 };
 
 export const listServices = async (
-  authorId?: number
+  authorId?: number,
+  skip?: number,
+  take?: number
 ): Promise<ServiceRead[]> => {
   const where: Prisma.ServiceWhereInput | undefined = authorId
     ? { author: { id: { equals: authorId } } }
     : undefined;
-  return db.service.findMany({ where, select: selectService });
+  return db.service.findMany({ where, skip, take, select: selectService });
+};
+
+export const countServices = async (authorId?: number): Promise<number> => {
+  const where: Prisma.ServiceWhereInput | undefined = authorId
+    ? { author: { id: { equals: authorId } } }
+    : undefined;
+  return db.service.count({ where });
 };
 
 export const getService = async (id: number): Promise<ServiceRead | null> => {
