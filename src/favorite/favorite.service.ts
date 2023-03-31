@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+import { selectService } from '../service/service.service';
 import { db } from '../utils/db.server';
 
 type Favorite = {
@@ -8,8 +10,11 @@ type Favorite = {
 
 const selectFavorite = {
   id: true,
-  serviceId: true,
   userId: true,
+  serviceId: true,
+  service: {
+    select: selectService,
+  },
 };
 
 export const createFavorite = async (
@@ -39,11 +44,33 @@ export const createFavorite = async (
   });
 };
 
-export const listFavorites = async (userId: number): Promise<Favorite[]> => {
-  return db.favorite.findMany({
-    where: { userId },
-    select: selectFavorite,
+export const listFavorites = async (
+  userId: number,
+  skip?: number,
+  take?: number
+): Promise<Favorite[]> => {
+  const where: Prisma.FavoriteWhereInput | undefined = userId
+    ? { userId: { equals: userId } }
+    : undefined;
+  const favorites = await db.favorite.findMany({
+    where,
+    skip,
+    take,
+    include: {
+      service: {
+        select: selectService,
+      },
+    },
   });
+  return favorites;
+};
+
+export const countFavorites = async (userId: number): Promise<number> => {
+  const where: Prisma.FavoriteWhereInput | undefined = userId
+    ? { userId: { equals: userId } }
+    : undefined;
+  const count = await db.favorite.count({ where });
+  return count;
 };
 
 export const getFavorite = async (
