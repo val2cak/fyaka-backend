@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import { User } from '../user/user.service';
 import { db } from '../utils/db.server';
 
-type ServiceRead = {
+export type ServiceRead = {
   id: number;
   title: string;
   description: string;
@@ -23,7 +23,7 @@ type ServiceWrite = {
   authorId: number;
 };
 
-const selectService = {
+export const selectService = {
   id: true,
   title: true,
   description: true,

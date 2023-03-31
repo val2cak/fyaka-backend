@@ -8,19 +8,20 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  username  String    @unique
-  email     String    @unique
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  username  String     @unique
+  email     String     @unique
   password  String
   Service   Service[]
+  Favorite  Favorite[]
 }
 
 model Service {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   title       String
   description String
   location    String
@@ -28,5 +29,14 @@ model Service {
   date        DateTime
   people      Int
   authorId    Int
-  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  Favorite    Favorite[]
+}
+
+model Favorite {
+  id        Int     @id @default(autoincrement())
+  serviceId Int
+  userId    Int
+  service   Service @relation(fields: [serviceId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
 }
