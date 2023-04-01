@@ -21,7 +21,7 @@ router.get('/', async (req: Request, res: Response) => {
       : undefined;
     const [services, totalCount] = await Promise.all([
       ServiceService.listServices(authorId, skip, pageSize, searchTerm),
-      ServiceService.countServices(authorId),
+      ServiceService.countServices(authorId, searchTerm),
     ]);
     const totalPages = Math.ceil(totalCount / pageSize);
     return res.status(200).json({ services, totalPages });

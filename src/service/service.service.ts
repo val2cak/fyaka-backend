@@ -67,10 +67,28 @@ export const listServices = async (
   return db.service.findMany({ where, skip, take, select: selectService });
 };
 
-export const countServices = async (authorId?: number): Promise<number> => {
-  const where: Prisma.ServiceWhereInput | undefined = authorId
-    ? { author: { id: { equals: authorId } } }
-    : undefined;
+export const countServices = async (
+  authorId?: number,
+  searchTerm?: string
+): Promise<number> => {
+  const where: Prisma.ServiceWhereInput =
+    authorId || searchTerm
+      ? {
+          AND: [
+            authorId ? { author: { id: { equals: authorId } } } : {},
+            searchTerm
+              ? {
+                  OR: [
+                    { title: { contains: searchTerm } },
+                    { description: { contains: searchTerm } },
+                    { location: { contains: searchTerm } },
+                    { author: { username: { contains: searchTerm } } },
+                  ],
+                }
+              : {},
+          ].filter(Boolean),
+        }
+      : {};
   return db.service.count({ where });
 };
 
