@@ -23,12 +23,16 @@ router.get('/:userId', async (req: Request, res: Response) => {
       : 6;
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
     const skip = (page - 1) * pageSize;
+    const searchTerm = req.query.searchTerm
+      ? (req.query.searchTerm as string).toLowerCase()
+      : undefined;
     const favorites = await FavoriteService.listFavorites(
       userId,
       skip,
-      pageSize
+      pageSize,
+      searchTerm
     );
-    const totalCount = await FavoriteService.countFavorites(userId);
+    const totalCount = await FavoriteService.countFavorites(userId, searchTerm);
     const totalPages = Math.ceil(totalCount / pageSize);
     return res.status(200).json({ favorites, totalPages });
   } catch (error: any) {

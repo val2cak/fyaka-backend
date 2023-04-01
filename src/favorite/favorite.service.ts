@@ -47,11 +47,20 @@ export const createFavorite = async (
 export const listFavorites = async (
   userId: number,
   skip?: number,
-  take?: number
+  take?: number,
+  searchTerm?: string
 ): Promise<Favorite[]> => {
-  const where: Prisma.FavoriteWhereInput | undefined = userId
-    ? { userId: { equals: userId } }
-    : undefined;
+  const where: Prisma.FavoriteWhereInput | undefined = {
+    userId: { equals: userId },
+    service: {
+      OR: [
+        { title: { contains: searchTerm } },
+        { description: { contains: searchTerm } },
+        { location: { contains: searchTerm } },
+        { author: { username: { contains: searchTerm } } },
+      ].filter(Boolean),
+    },
+  };
   const favorites = await db.favorite.findMany({
     where,
     skip,
@@ -65,10 +74,32 @@ export const listFavorites = async (
   return favorites;
 };
 
-export const countFavorites = async (userId: number): Promise<number> => {
-  const where: Prisma.FavoriteWhereInput | undefined = userId
-    ? { userId: { equals: userId } }
-    : undefined;
+export const countFavorites = async (
+  userId: number,
+  searchTerm?: string
+): Promise<number> => {
+  const where: Prisma.FavoriteWhereInput | undefined =
+    userId || searchTerm
+      ? {
+          AND: [
+            userId ? { userId: { equals: userId } } : {},
+            searchTerm
+              ? {
+                  OR: [
+                    { service: { title: { contains: searchTerm } } },
+                    { service: { description: { contains: searchTerm } } },
+                    { service: { location: { contains: searchTerm } } },
+                    {
+                      service: {
+                        author: { username: { contains: searchTerm } },
+                      },
+                    },
+                  ],
+                }
+              : {},
+          ].filter(Boolean),
+        }
+      : {};
   const count = await db.favorite.count({ where });
   return count;
 };
