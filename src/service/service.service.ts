@@ -57,7 +57,9 @@ export const listServices = async (
                     { title: { contains: searchTerm } },
                     { description: { contains: searchTerm } },
                     { location: { contains: searchTerm } },
-                    { author: { username: { contains: searchTerm } } },
+                    {
+                      author: { username: { contains: searchTerm } },
+                    },
                   ],
                 }
               : {},
