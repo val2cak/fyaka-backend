@@ -16,8 +16,11 @@ router.get('/', async (req: Request, res: Response) => {
       : 6;
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
     const skip = (page - 1) * pageSize;
+    const searchTerm = req.query.searchTerm
+      ? (req.query.searchTerm as string).toLowerCase()
+      : undefined;
     const [services, totalCount] = await Promise.all([
-      ServiceService.listServices(authorId, skip, pageSize),
+      ServiceService.listServices(authorId, skip, pageSize, searchTerm),
       ServiceService.countServices(authorId),
     ]);
     const totalPages = Math.ceil(totalCount / pageSize);
