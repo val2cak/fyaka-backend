@@ -11,6 +11,7 @@ export type ServiceRead = {
   date: Date;
   people: number;
   author: Omit<User, 'password'>;
+  categoryId: number;
 };
 
 type ServiceWrite = {
@@ -21,6 +22,7 @@ type ServiceWrite = {
   date: Date;
   people: number;
   authorId: number;
+  categoryId: number;
 };
 
 export const selectService = {
@@ -38,6 +40,7 @@ export const selectService = {
       email: true,
     },
   },
+  categoryId: true,
 };
 
 export const listServices = async (
