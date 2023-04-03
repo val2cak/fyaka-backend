@@ -107,10 +107,27 @@ export const getService = async (id: number): Promise<ServiceRead | null> => {
 export const createService = async (
   service: ServiceWrite
 ): Promise<ServiceRead> => {
-  const { title, description, location, price, date, people, authorId } =
-    service;
+  const {
+    title,
+    description,
+    location,
+    price,
+    date,
+    people,
+    authorId,
+    categoryId,
+  } = service;
   return db.service.create({
-    data: { title, description, location, price, date, people, authorId },
+    data: {
+      title,
+      description,
+      location,
+      price,
+      date,
+      people,
+      authorId,
+      categoryId,
+    },
     select: selectService,
   });
 };
@@ -119,11 +136,28 @@ export const updateService = async (
   service: ServiceWrite,
   id: number
 ): Promise<ServiceRead> => {
-  const { title, description, location, price, date, people, authorId } =
-    service;
+  const {
+    title,
+    description,
+    location,
+    price,
+    date,
+    people,
+    authorId,
+    categoryId,
+  } = service;
   return db.service.update({
     where: { id },
-    data: { title, description, location, price, date, people, authorId },
+    data: {
+      title,
+      description,
+      location,
+      price,
+      date,
+      people,
+      authorId,
+      categoryId,
+    },
     select: selectService,
   });
 };
