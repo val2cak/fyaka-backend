@@ -13,9 +13,9 @@ router.get('/', async (req: Request, res: Response) => {
       : undefined;
     const pageSize = req.query.pageSize
       ? parseInt(req.query.pageSize as string, 10)
-      : 6;
+      : undefined;
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-    const skip = (page - 1) * pageSize;
+    const skip = pageSize ? (page - 1) * pageSize : undefined;
     const searchTerm = req.query.searchTerm
       ? (req.query.searchTerm as string)
       : undefined;
@@ -24,7 +24,7 @@ router.get('/', async (req: Request, res: Response) => {
       ServiceService.listServices(authorId, skip, pageSize, decodedSearchTerm),
       ServiceService.countServices(authorId, decodedSearchTerm),
     ]);
-    const totalPages = Math.ceil(totalCount / pageSize);
+    const totalPages = pageSize ? Math.ceil(totalCount / pageSize) : 1;
     return res.status(200).json({ services, totalPages });
   } catch (error: any) {
     return res.status(500).json(error.message);
