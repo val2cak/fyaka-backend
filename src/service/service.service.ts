@@ -52,7 +52,7 @@ export const listServices = async (
   maxPrice?: number,
   minDate?: Date,
   maxDate?: Date,
-  categoryId?: number,
+  categoryIds?: number[],
   location?: string,
   people?: number
 ): Promise<ServiceRead[]> => {
@@ -73,7 +73,9 @@ export const listServices = async (
       maxPrice ? { price: { lte: maxPrice } } : {},
       minDate ? { date: { gte: new Date(minDate) } } : {},
       maxDate ? { date: { lte: new Date(maxDate) } } : {},
-      categoryId ? { categoryId: { equals: categoryId } } : {},
+      categoryIds && categoryIds.length
+        ? { categoryId: { in: categoryIds } }
+        : {},
       location ? { location: { contains: location } } : {},
       people ? { people: { gte: people } } : {},
     ].filter(Boolean),
@@ -89,7 +91,7 @@ export const countServices = async (
   maxPrice?: number,
   minDate?: Date,
   maxDate?: Date,
-  categoryId?: number,
+  categoryIds?: number[],
   location?: string,
   people?: number
 ): Promise<number> => {
@@ -110,7 +112,9 @@ export const countServices = async (
       maxPrice ? { price: { lte: maxPrice } } : {},
       minDate ? { date: { gte: new Date(minDate) } } : {},
       maxDate ? { date: { lte: new Date(maxDate) } } : {},
-      categoryId ? { categoryId: { equals: categoryId } } : {},
+      categoryIds && categoryIds.length
+        ? { categoryId: { in: categoryIds } }
+        : {},
       location ? { location: { contains: location } } : {},
       people ? { people: { gte: people } } : {},
     ].filter(Boolean),

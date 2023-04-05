@@ -21,7 +21,6 @@ router.get('/', async (req: Request, res: Response) => {
       : undefined;
     const decodedSearchTerm = searchTerm ? decodeURI(searchTerm) : undefined;
 
-    // New filter options
     const minPrice = req.query.minPrice
       ? parseInt(req.query.minPrice as string)
       : undefined;
@@ -35,7 +34,9 @@ router.get('/', async (req: Request, res: Response) => {
       ? new Date(req.query.maxDate as string)
       : undefined;
     const categoryId = req.query.categoryId
-      ? parseInt(req.query.categoryId as string, 10)
+      ? Array.isArray(req.query.categoryId)
+        ? req.query.categoryId.map((id) => parseInt(id as string, 10))
+        : [parseInt(req.query.categoryId as string, 10)]
       : undefined;
     const location = req.query.location
       ? (req.query.location as string)
