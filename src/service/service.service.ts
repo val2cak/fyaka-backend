@@ -47,53 +47,75 @@ export const listServices = async (
   authorId?: number,
   skip?: number,
   take?: number,
-  searchTerm?: string
+  searchTerm?: string,
+  minPrice?: number,
+  maxPrice?: number,
+  minDate?: Date,
+  maxDate?: Date,
+  categoryId?: number,
+  location?: string,
+  people?: number
 ): Promise<ServiceRead[]> => {
-  const where: Prisma.ServiceWhereInput =
-    authorId || searchTerm
-      ? {
-          AND: [
-            authorId ? { author: { id: { equals: authorId } } } : {},
-            searchTerm
-              ? {
-                  OR: [
-                    { title: { contains: searchTerm } },
-                    { description: { contains: searchTerm } },
-                    { location: { contains: searchTerm } },
-                    {
-                      author: { username: { contains: searchTerm } },
-                    },
-                  ],
-                }
-              : {},
-          ].filter(Boolean),
-        }
-      : {};
+  const where: Prisma.ServiceWhereInput = {
+    AND: [
+      authorId ? { author: { id: { equals: authorId } } } : {},
+      searchTerm
+        ? {
+            OR: [
+              { title: { contains: searchTerm } },
+              { description: { contains: searchTerm } },
+              { location: { contains: searchTerm } },
+              { author: { username: { contains: searchTerm } } },
+            ],
+          }
+        : {},
+      minPrice ? { price: { gte: minPrice } } : {},
+      maxPrice ? { price: { lte: maxPrice } } : {},
+      minDate ? { date: { gte: new Date(minDate) } } : {},
+      maxDate ? { date: { lte: new Date(maxDate) } } : {},
+      categoryId ? { categoryId: { equals: categoryId } } : {},
+      location ? { location: { contains: location } } : {},
+      people ? { people: { gte: people } } : {},
+    ].filter(Boolean),
+  };
+
   return db.service.findMany({ where, skip, take, select: selectService });
 };
 
 export const countServices = async (
   authorId?: number,
-  searchTerm?: string
+  searchTerm?: string,
+  minPrice?: number,
+  maxPrice?: number,
+  minDate?: Date,
+  maxDate?: Date,
+  categoryId?: number,
+  location?: string,
+  people?: number
 ): Promise<number> => {
-  const where: Prisma.ServiceWhereInput =
-    authorId || searchTerm
-      ? {
-          AND: [
-            authorId ? { author: { id: { equals: authorId } } } : {},
-            searchTerm
-              ? {
-                  OR: [
-                    { title: { contains: searchTerm } },
-                    { description: { contains: searchTerm } },
-                    { location: { contains: searchTerm } },
-                    { author: { username: { contains: searchTerm } } },
-                  ],
-                }
-              : {},
-          ].filter(Boolean),
-        }
-      : {};
+  const where: Prisma.ServiceWhereInput = {
+    AND: [
+      authorId ? { author: { id: { equals: authorId } } } : {},
+      searchTerm
+        ? {
+            OR: [
+              { title: { contains: searchTerm } },
+              { description: { contains: searchTerm } },
+              { location: { contains: searchTerm } },
+              { author: { username: { contains: searchTerm } } },
+            ],
+          }
+        : {},
+      minPrice ? { price: { gte: minPrice } } : {},
+      maxPrice ? { price: { lte: maxPrice } } : {},
+      minDate ? { date: { gte: new Date(minDate) } } : {},
+      maxDate ? { date: { lte: new Date(maxDate) } } : {},
+      categoryId ? { categoryId: { equals: categoryId } } : {},
+      location ? { location: { contains: location } } : {},
+      people ? { people: { gte: people } } : {},
+    ].filter(Boolean),
+  };
+
   return db.service.count({ where });
 };
 

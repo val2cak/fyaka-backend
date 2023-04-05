@@ -20,9 +20,55 @@ router.get('/', async (req: Request, res: Response) => {
       ? (req.query.searchTerm as string)
       : undefined;
     const decodedSearchTerm = searchTerm ? decodeURI(searchTerm) : undefined;
+
+    // New filter options
+    const minPrice = req.query.minPrice
+      ? parseInt(req.query.minPrice as string)
+      : undefined;
+    const maxPrice = req.query.maxPrice
+      ? parseInt(req.query.maxPrice as string)
+      : undefined;
+    const minDate = req.query.minDate
+      ? new Date(req.query.minDate as string)
+      : undefined;
+    const maxDate = req.query.maxDate
+      ? new Date(req.query.maxDate as string)
+      : undefined;
+    const categoryId = req.query.categoryId
+      ? parseInt(req.query.categoryId as string, 10)
+      : undefined;
+    const location = req.query.location
+      ? (req.query.location as string)
+      : undefined;
+    const people = req.query.people
+      ? parseInt(req.query.people as string, 10)
+      : undefined;
+
     const [services, totalCount] = await Promise.all([
-      ServiceService.listServices(authorId, skip, pageSize, decodedSearchTerm),
-      ServiceService.countServices(authorId, decodedSearchTerm),
+      ServiceService.listServices(
+        authorId,
+        skip,
+        pageSize,
+        decodedSearchTerm,
+        minPrice,
+        maxPrice,
+        minDate,
+        maxDate,
+        categoryId,
+        location,
+        people
+      ),
+      ServiceService.countServices(
+        authorId,
+        decodedSearchTerm,
+        minPrice,
+        maxPrice,
+        minDate,
+        maxDate,
+        categoryId,
+        location,
+        people
+      ),
     ]);
     const totalPages = pageSize ? Math.ceil(totalCount / pageSize) : 1;
     return res.status(200).json({ services, totalPages });
