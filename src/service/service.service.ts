@@ -73,9 +73,7 @@ export const listServices = async (
       maxPrice ? { price: { lte: maxPrice } } : {},
       minDate ? { date: { gte: new Date(minDate) } } : {},
       maxDate ? { date: { lte: new Date(maxDate) } } : {},
-      categoryIds && categoryIds.length
-        ? { categoryId: { in: categoryIds } }
-        : {},
+      categoryIds ? { categoryId: { in: categoryIds } } : {},
       location ? { location: { contains: location } } : {},
       people ? { people: { gte: people } } : {},
     ].filter(Boolean),
@@ -112,9 +110,7 @@ export const countServices = async (
       maxPrice ? { price: { lte: maxPrice } } : {},
       minDate ? { date: { gte: new Date(minDate) } } : {},
       maxDate ? { date: { lte: new Date(maxDate) } } : {},
-      categoryIds && categoryIds.length
-        ? { categoryId: { in: categoryIds } }
-        : {},
+      categoryIds ? { categoryId: { in: categoryIds } } : {},
       location ? { location: { contains: location } } : {},
       people ? { people: { gte: people } } : {},
     ].filter(Boolean),
