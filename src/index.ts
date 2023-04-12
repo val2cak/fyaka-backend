@@ -6,6 +6,7 @@ import { userRouter } from './user/user.router';
 import { serviceRouter } from './service/service.router';
 import { favoriteRouter } from './favorite/favorite.router';
 import { categoryRouter } from './category/category.router';
+import { reviewRouter } from './review/review.router';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use('/api/users', userRouter);
 app.use('/api/services', serviceRouter);
 app.use('/api/favorites', favoriteRouter);
 app.use('/api/categories', categoryRouter);
+app.use('/api/reviews', reviewRouter);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
