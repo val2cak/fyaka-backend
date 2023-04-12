@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
+import { db } from '../utils/db.server';
 
 const prisma = new PrismaClient();
 
@@ -24,12 +25,18 @@ export const createReview = async (
   }
 };
 
-export const getReviewsByUserId = async (userId: number) => {
+export const getReviewsByUserId = async (
+  userId: number,
+  skip?: number,
+  take?: number
+) => {
   try {
     const reviews = await prisma.review.findMany({
       where: {
         userId,
       },
+      skip,
+      take,
       select: {
         id: true,
         createdAt: true,
@@ -50,4 +57,13 @@ export const getReviewsByUserId = async (userId: number) => {
     console.error('Error getting reviews by userId:', error);
     throw new Error('Failed to get reviews');
   }
+};
+
+export const countReviews = async (userId: number): Promise<number> => {
+  const where: Prisma.ReviewWhereInput | undefined = userId
+    ? { userId: { equals: userId } }
+    : {};
+
+  const count = await db.review.count({ where });
+  return count;
 };
