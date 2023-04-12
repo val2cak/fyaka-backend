@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
       rating,
       text
     );
-    res.status(201).json({ review });
+    res.status(201).json(review);
   } catch (error: any) {
     return res.status(500).json(error.message);
   }

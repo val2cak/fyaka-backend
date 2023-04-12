@@ -30,6 +30,20 @@ export const getReviewsByUserId = async (userId: number) => {
       where: {
         userId,
       },
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        author: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        userId: true,
+        rating: true,
+        text: true,
+      },
     });
     return reviews;
   } catch (error) {
