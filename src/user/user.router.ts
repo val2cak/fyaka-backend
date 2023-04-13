@@ -88,7 +88,11 @@ userRouter.post(
 // GET: List of all Users
 userRouter.get('/', async (req: Request, res: Response) => {
   try {
-    const users = await UserService.listUsers();
+    const searchTerm = req.query.searchTerm
+      ? (req.query.searchTerm as string)
+      : undefined;
+    const decodedSearchTerm = searchTerm ? decodeURI(searchTerm) : undefined;
+    const users = await UserService.listUsers(decodedSearchTerm);
     return res.status(200).json(users);
   } catch (error: any) {
     return res.status(500).json(error.message);

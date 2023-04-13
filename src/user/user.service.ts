@@ -14,10 +14,24 @@ const selectUserFields = {
   password: true,
 };
 
-export const listUsers = async (): Promise<
-  Omit<User, 'email' | 'password'>[]
-> => {
-  return db.user.findMany({ select: { id: true, username: true } });
+export const listUsers = async (
+  searchTerm?: string
+): Promise<Omit<User, 'email' | 'password'>[]> => {
+  let users;
+  if (searchTerm) {
+    users = await db.user.findMany({
+      where: {
+        username: {
+          contains: searchTerm,
+          mode: 'insensitive',
+        },
+      },
+      select: { id: true, username: true },
+    });
+  } else {
+    users = await db.user.findMany({ select: { id: true, username: true } });
+  }
+  return users;
 };
 
 export const getUser = async (id: number): Promise<User | null> => {
