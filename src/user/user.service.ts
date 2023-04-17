@@ -7,7 +7,7 @@ export type User = {
   password: string;
   rating?: number | null;
   biography?: string | null;
-  phoneNumber?: number | null;
+  phoneNumber?: string | null;
   fullName?: string | null;
   gender?: string | null;
   dateOfBirth?: Date | null;

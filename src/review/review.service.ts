@@ -18,6 +18,26 @@ export const createReview = async (
         text,
       },
     });
+
+    // Calculate average user rating
+    const reviews = await prisma.review.findMany({
+      where: {
+        userId,
+      },
+    });
+    const totalRatings = reviews.reduce((acc, r) => acc + r.rating, 0);
+    const averageRating = totalRatings / reviews.length;
+
+    // Update user's rating
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        rating: averageRating,
+      },
+    });
+
     return review;
   } catch (error) {
     console.error('Error creating review:', error);

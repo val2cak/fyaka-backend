@@ -16,7 +16,7 @@ model User {
   password    String
   rating      Float?
   biography   String?
-  phoneNumber Int?
+  phoneNumber String?
   fullName    String?
   gender      String?
   dateOfBirth DateTime?
