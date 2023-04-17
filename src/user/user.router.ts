@@ -114,26 +114,20 @@ userRouter.get('/:id', async (req: Request, res: Response) => {
 });
 
 // PUT: Updating a User
-// Params: firstName, lastName
-userRouter.put(
-  '/:id',
-  body('username').isString(),
-  body('email').isString(),
-  async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    const id: number = parseInt(req.params.id, 10);
-    try {
-      const user = req.body;
-      const updatedUser = await UserService.updateUser(user, id);
-      return res.status(200).json(updatedUser);
-    } catch (error: any) {
-      return res.status(500).json(error.message);
-    }
+userRouter.put('/:id', async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-);
+  const id: number = parseInt(req.params.id, 10);
+  try {
+    const user = req.body;
+    const updatedUser = await UserService.updateUser(user, id);
+    return res.status(200).json(updatedUser);
+  } catch (error: any) {
+    return res.status(500).json(error.message);
+  }
+});
 
 // DELETE: Delete a User based on the id
 userRouter.delete('/:id', async (req: Request, res: Response) => {

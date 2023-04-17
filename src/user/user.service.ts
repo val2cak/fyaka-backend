@@ -5,18 +5,42 @@ export type User = {
   username: string;
   email: string;
   password: string;
+  rating?: number | null;
+  biography?: string | null;
+  phoneNumber?: number | null;
+  fullName?: string | null;
+  gender?: string | null;
+  dateOfBirth?: Date | null;
 };
 
-const selectUserFields = {
+const readUserFields = {
+  id: true,
+  username: true,
+  email: true,
+  rating: true,
+  biography: true,
+  phoneNumber: true,
+  fullName: true,
+  gender: true,
+  dateOfBirth: true,
+};
+
+const writeUserFields = {
   id: true,
   username: true,
   email: true,
   password: true,
+  rating: true,
+  biography: true,
+  phoneNumber: true,
+  fullName: true,
+  gender: true,
+  dateOfBirth: true,
 };
 
 export const listUsers = async (
   searchTerm?: string
-): Promise<Omit<User, 'email' | 'password'>[]> => {
+): Promise<Omit<User, 'password'>[]> => {
   let users;
   if (searchTerm) {
     users = await db.user.findMany({
@@ -26,40 +50,48 @@ export const listUsers = async (
           mode: 'insensitive',
         },
       },
-      select: { id: true, username: true },
+      select: readUserFields,
     });
   } else {
-    users = await db.user.findMany({ select: { id: true, username: true } });
+    users = await db.user.findMany({ select: readUserFields });
   }
   return users;
 };
 
-export const getUser = async (id: number): Promise<User | null> => {
-  return db.user.findUnique({ where: { id }, select: selectUserFields });
+export const getUser = async (
+  id: number
+): Promise<Omit<User, 'password'> | null> => {
+  return db.user.findUnique({ where: { id }, select: readUserFields });
 };
 
 export const createUser = async (user: Omit<User, 'id'>): Promise<User> => {
-  return db.user.create({ data: user, select: selectUserFields });
+  return db.user.create({ data: user, select: writeUserFields });
 };
 
 export const getUserByUsername = async (
   username: string
 ): Promise<User | null> => {
-  return db.user.findFirst({ where: { username }, select: selectUserFields });
+  return db.user.findFirst({ where: { username }, select: writeUserFields });
 };
 
-export const getUserByEmail = async (email: string): Promise<User | null> => {
-  return db.user.findFirst({ where: { email }, select: selectUserFields });
+export const getUserByEmail = async (
+  email: string
+): Promise<Omit<User, 'password'> | null> => {
+  return db.user.findFirst({ where: { email }, select: writeUserFields });
 };
 
 export const updateUser = async (
   user: Omit<User, 'id'>,
   id: number
 ): Promise<User> => {
+  const { ...rest } = user;
+
   return db.user.update({
     where: { id },
-    data: user,
-    select: selectUserFields,
+    data: {
+      ...rest,
+    },
+    select: writeUserFields,
   });
 };
 

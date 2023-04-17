@@ -8,15 +8,21 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  username  String     @unique
-  email     String     @unique
-  password  String
-  Service   Service[]
-  Favorite  Favorite[]
-  Review    Review[]
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  username    String     @unique
+  email       String     @unique
+  password    String
+  rating      Float?
+  biography   String?
+  phoneNumber Int?
+  fullName    String?
+  gender      String?
+  dateOfBirth DateTime?
+  Service     Service[]
+  Favorite    Favorite[]
+  Review      Review[]
 }
 
 model Service {
@@ -54,7 +60,6 @@ model Review {
   updatedAt DateTime @updatedAt
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
-  authorUsername String
   userId    Int
   rating    Float
   text      String

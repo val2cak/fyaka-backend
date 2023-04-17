@@ -5,7 +5,7 @@ import * as ReviewService from './review.service';
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-  const { authorId, userId, rating, text } = req.body;
+  const { authorId, authorUsername, userId, rating, text } = req.body;
 
   try {
     const review = await ReviewService.createReview(
