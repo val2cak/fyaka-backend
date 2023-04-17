@@ -20,6 +20,7 @@ model User {
   fullName    String?
   gender      String?
   dateOfBirth DateTime?
+  imageUrl    String?
   Service     Service[]
   Favorite    Favorite[]
   Review      Review[]

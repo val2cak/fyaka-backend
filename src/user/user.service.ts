@@ -11,6 +11,7 @@ export type User = {
   fullName?: string | null;
   gender?: string | null;
   dateOfBirth?: Date | null;
+  imageUrl?: string | null;
 };
 
 const readUserFields = {
@@ -23,6 +24,7 @@ const readUserFields = {
   fullName: true,
   gender: true,
   dateOfBirth: true,
+  imageUrl: true,
 };
 
 const writeUserFields = {
@@ -36,6 +38,7 @@ const writeUserFields = {
   fullName: true,
   gender: true,
   dateOfBirth: true,
+  imageUrl: true,
 };
 
 export const listUsers = async (
