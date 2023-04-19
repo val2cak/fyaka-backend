@@ -54,7 +54,8 @@ export const listServices = async (
   maxDate?: Date,
   categoryIds?: number[],
   location?: string,
-  people?: number
+  people?: number,
+  userRating?: number
 ): Promise<ServiceRead[]> => {
   const where: Prisma.ServiceWhereInput = {
     AND: [
@@ -76,6 +77,7 @@ export const listServices = async (
       categoryIds ? { categoryId: { in: categoryIds } } : {},
       location ? { location: { contains: location } } : {},
       people ? { people: { gte: people } } : {},
+      userRating ? { author: { rating: { gte: userRating } } } : {},
     ].filter(Boolean),
   };
 
@@ -91,7 +93,8 @@ export const countServices = async (
   maxDate?: Date,
   categoryIds?: number[],
   location?: string,
-  people?: number
+  people?: number,
+  userRating?: number
 ): Promise<number> => {
   const where: Prisma.ServiceWhereInput = {
     AND: [
@@ -113,6 +116,7 @@ export const countServices = async (
       categoryIds ? { categoryId: { in: categoryIds } } : {},
       location ? { location: { contains: location } } : {},
       people ? { people: { gte: people } } : {},
+      userRating ? { author: { rating: { gte: userRating } } } : {},
     ].filter(Boolean),
   };
 

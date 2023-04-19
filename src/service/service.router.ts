@@ -44,6 +44,9 @@ router.get('/', async (req: Request, res: Response) => {
     const people = req.query.people
       ? parseInt(req.query.people as string, 10)
       : undefined;
+    const userRating = req.query.userRating
+      ? parseFloat(req.query.userRating as string)
+      : undefined;
 
     const [services, totalCount] = await Promise.all([
       ServiceService.listServices(
@@ -57,7 +60,8 @@ router.get('/', async (req: Request, res: Response) => {
         maxDate,
         categoryId,
         location,
-        people
+        people,
+        userRating
       ),
       ServiceService.countServices(
         authorId,
@@ -68,7 +72,8 @@ router.get('/', async (req: Request, res: Response) => {
         maxDate,
         categoryId,
         location,
-        people
+        people,
+        userRating
       ),
     ]);
     const totalPages = pageSize ? Math.ceil(totalCount / pageSize) : 1;
