@@ -5,7 +5,7 @@ import * as ReviewService from './review.service';
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-  const { authorId, authorUsername, userId, rating, text } = req.body;
+  const { authorId, userId, rating, text } = req.body;
 
   try {
     const review = await ReviewService.createReview(
@@ -36,7 +36,7 @@ router.get('/:userId', async (req, res) => {
     );
     const totalCount = await ReviewService.countReviews(userId);
     const totalPages = Math.ceil(totalCount / pageSize);
-    return res.status(200).json({ reviews, totalPages });
+    return res.status(200).json({ reviews, totalPages, totalCount });
   } catch (error: any) {
     return res.status(500).json(error.message);
   }
