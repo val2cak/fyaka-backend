@@ -103,7 +103,7 @@ userRouter.get('/', async (req: Request, res: Response) => {
 userRouter.get('/:id', async (req: Request, res: Response) => {
   const id: number = parseInt(req.params.id, 10);
   try {
-    const user = await UserService.getUser(id);
+    const user = await UserService.getUserWithoutPassword(id);
     if (user) {
       return res.status(200).json(user);
     }
@@ -139,3 +139,39 @@ userRouter.delete('/:id', async (req: Request, res: Response) => {
     return res.status(500).json(error.message);
   }
 });
+
+const passwordValidators = [
+  body('currentPassword').isLength({ min: 8 }),
+  body('newPassword').isLength({ min: 8 }),
+];
+
+// PUT: Change Password of a User
+// Params: currentPassword, newPassword
+userRouter.put(
+  '/change-password',
+  passwordValidators,
+  async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { id, currentPassword, newPassword } = req.body;
+
+    const user = await UserService.getUserWithPassword(id);
+
+    const isMatch = await bcrypt.compare(
+      currentPassword,
+      user?.password ? user?.password : ''
+    );
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Incorrect current password!' });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    await UserService.updateUserPassword(hashedNewPassword, id);
+
+    return res.status(200).json('Password updated successfully');
+  }
+);

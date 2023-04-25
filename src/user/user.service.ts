@@ -61,10 +61,14 @@ export const listUsers = async (
   return users;
 };
 
-export const getUser = async (
+export const getUserWithoutPassword = async (
   id: number
 ): Promise<Omit<User, 'password'> | null> => {
   return db.user.findUnique({ where: { id }, select: readUserFields });
+};
+
+export const getUserWithPassword = async (id: number): Promise<User | null> => {
+  return db.user.findUnique({ where: { id }, select: writeUserFields });
 };
 
 export const createUser = async (user: Omit<User, 'id'>): Promise<User> => {
@@ -101,3 +105,13 @@ export const updateUser = async (
 export const deleteUser = async (id: number): Promise<void> => {
   await db.user.delete({ where: { id } });
 };
+
+export async function updateUserPassword(
+  newPassword: string,
+  id: number
+): Promise<User> {
+  return await db.user.update({
+    where: { id: id },
+    data: { password: newPassword },
+  });
+}
