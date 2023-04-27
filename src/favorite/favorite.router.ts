@@ -22,7 +22,11 @@ router.get('/:userId', async (req: Request, res: Response) => {
       ? parseInt(req.query.pageSize as string, 10)
       : 6;
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-    const skip = (page - 1) * pageSize;
+    const skip = !req.query.searchTerm
+      ? pageSize
+        ? (page - 1) * pageSize
+        : undefined
+      : undefined;
     const searchTerm = req.query.searchTerm
       ? (req.query.searchTerm as string)
       : undefined;
