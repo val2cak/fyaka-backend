@@ -7,6 +7,17 @@ import * as ServiceService from './service.service';
 const router = express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
+  const hasFilters =
+    req.query.categoryId ||
+    req.query.minPrice ||
+    req.query.maxPrice ||
+    req.query.minDate ||
+    req.query.maxDate ||
+    req.query.location ||
+    req.query.people ||
+    req.query.userRating ||
+    req.query.searchTerm;
+
   try {
     const authorId = req.query.authorId
       ? parseInt(req.query.authorId as string, 10)
@@ -15,7 +26,11 @@ router.get('/', async (req: Request, res: Response) => {
       ? parseInt(req.query.pageSize as string, 10)
       : undefined;
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-    const skip = pageSize ? (page - 1) * pageSize : undefined;
+    const skip = !hasFilters
+      ? pageSize
+        ? (page - 1) * pageSize
+        : undefined
+      : undefined;
     const searchTerm = req.query.searchTerm
       ? (req.query.searchTerm as string)
       : undefined;

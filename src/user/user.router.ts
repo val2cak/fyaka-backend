@@ -148,7 +148,7 @@ const passwordValidators = [
 // PUT: Change Password of a User
 // Params: currentPassword, newPassword
 userRouter.put(
-  '/change-password',
+  '/change-password/:id',
   passwordValidators,
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
@@ -156,7 +156,8 @@ userRouter.put(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { id, currentPassword, newPassword } = req.body;
+    const id: number = parseInt(req.params.id, 10);
+    const { currentPassword, newPassword } = req.body;
 
     const user = await UserService.getUserWithPassword(id);
 
