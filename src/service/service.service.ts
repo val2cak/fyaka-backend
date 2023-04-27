@@ -76,7 +76,7 @@ export const listServices = async (
       maxDate ? { date: { lte: new Date(maxDate) } } : {},
       categoryIds ? { categoryId: { in: categoryIds } } : {},
       location ? { location: { contains: location } } : {},
-      people ? { people: { gte: people } } : {},
+      people ? { people: { equals: people } } : {},
       userRating ? { author: { rating: { gte: userRating } } } : {},
     ].filter(Boolean),
   };
@@ -115,7 +115,7 @@ export const countServices = async (
       maxDate ? { date: { lte: new Date(maxDate) } } : {},
       categoryIds ? { categoryId: { in: categoryIds } } : {},
       location ? { location: { contains: location } } : {},
-      people ? { people: { gte: people } } : {},
+      people ? { people: { equals: people } } : {},
       userRating ? { author: { rating: { gte: userRating } } } : {},
     ].filter(Boolean),
   };
