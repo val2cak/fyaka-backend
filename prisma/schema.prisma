@@ -8,18 +8,28 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  firstName String
-  lastName  String
-  Service   Service[]
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  username    String     @unique
+  email       String     @unique
+  password    String
+  rating      Float?
+  biography   String?
+  phoneNumber String?
+  fullName    String?
+  gender      String?
+  dateOfBirth DateTime?
+  imageUrl    String?
+  Service     Service[]
+  Favorite    Favorite[]
+  Review      Review[]
 }
 
 model Service {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   title       String
   description String
   location    String
@@ -27,5 +37,31 @@ model Service {
   date        DateTime
   people      Int
   authorId    Int
-  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  Favorite    Favorite[]
+  categoryId  Int
+}
+
+model Favorite {
+  id        Int     @id @default(autoincrement())
+  serviceId Int
+  userId    Int
+  service   Service @relation(fields: [serviceId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  userId    Int
+  rating    Float
+  text      String
 }

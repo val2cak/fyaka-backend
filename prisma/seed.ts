@@ -1,8 +1,9 @@
 import { db } from '../src/utils/db.server';
 
 type User = {
-  firstName: string;
-  lastName: string;
+  username: string;
+  email: string;
+  password: string;
 };
 
 type Service = {
@@ -19,15 +20,16 @@ async function seed() {
     getUsers().map((user) => {
       return db.user.create({
         data: {
-          firstName: user.firstName,
-          lastName: user.lastName,
+          username: user.username,
+          email: user.email,
+          password: user.password,
         },
       });
     })
   );
   const user = await db.user.findFirst({
     where: {
-      firstName: 'John',
+      username: 'username',
     },
   });
 
@@ -54,16 +56,9 @@ seed();
 function getUsers(): Array<User> {
   return [
     {
-      firstName: 'John',
-      lastName: 'Doe',
-    },
-    {
-      firstName: 'Mark',
-      lastName: 'Doe',
-    },
-    {
-      firstName: 'Ian',
-      lastName: 'Doe',
+      username: 'username',
+      email: 'email',
+      password: 'password',
     },
   ];
 }
