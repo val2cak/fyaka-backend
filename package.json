@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "vercel-build": "prisma format && prisma generate && npx prisma db push && npx prisma db seed"
   },
   "repository": {
     "type": "git",
