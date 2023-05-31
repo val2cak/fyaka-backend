@@ -2,10 +2,11 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, { Secret } from 'jsonwebtoken';
 
 import * as UserService from './user.service';
-import { JWT_SECRET } from '../../config/config';
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export const userRouter = express.Router();
 
@@ -74,7 +75,7 @@ userRouter.post(
       if (!isMatch) {
         return res.status(401).json({ error: 'Incorrect password!' });
       }
-      const token = jwt.sign({ id: user.id }, JWT_SECRET, {
+      const token = jwt.sign({ id: user.id }, JWT_SECRET as Secret, {
         expiresIn: '1h',
       });
       const userData = { id: user.id, username: user.username };
