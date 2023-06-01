@@ -13,6 +13,7 @@ type Service = {
   price: number;
   date: Date;
   people: number;
+  categoryId: number;
 };
 
 async function seed() {
@@ -35,7 +36,8 @@ async function seed() {
 
   await Promise.all(
     getServices().map((service) => {
-      const { title, description, location, price, date, people } = service;
+      const { title, description, location, price, date, people, categoryId } =
+        service;
       return db.service.create({
         data: {
           title,
@@ -44,7 +46,8 @@ async function seed() {
           price,
           date,
           people,
-          authorId: user.id,
+          authorId: user?.id as number,
+          categoryId,
         },
       });
     })
