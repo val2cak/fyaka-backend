@@ -2,14 +2,14 @@
   "name": "fyaka-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "index.js",
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.ts",
-    "build": "tsc",
+    "build": "tsc && node build/index.js",
     "vercel-build": "prisma format && prisma generate && npx prisma db push && npx prisma db seed && npm run build"
   },
   "repository": {
