@@ -75,6 +75,7 @@ function getServices(): Array<Service> {
       price: 30,
       date: new Date(),
       people: 1,
+      categoryId: 1,
     },
   ];
 }
