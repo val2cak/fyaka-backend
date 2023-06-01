@@ -8,9 +8,7 @@ import { favoriteRouter } from './favorite/favorite.router';
 import { categoryRouter } from './category/category.router';
 import { reviewRouter } from './review/review.router';
 
-if (process.env.NODE_ENV !== 'production') {
-  dotenv.config();
-}
+dotenv.config();
 
 const app = express();
 
