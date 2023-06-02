@@ -20,13 +20,6 @@ app.use('/api/favorites', favoriteRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/reviews', reviewRouter);
 
-if (process.env.NODE_ENV === 'production') {
-  app.listen(() => {
-    console.log('Server running on Vercel!');
-  });
-} else {
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
-}
+app.listen(() => {
+  console.log('Server running on Vercel!');
+});
