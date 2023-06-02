@@ -12,7 +12,11 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: 'https://fyaka.vercel.app',
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use('/api/users', userRouter);
 app.use('/api/services', serviceRouter);
