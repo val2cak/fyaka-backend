@@ -12,11 +12,7 @@ dotenv.config();
 
 const app = express();
 
-const corsOptions = {
-  origin: 'https://fyaka.vercel.app',
-};
-app.use(cors(corsOptions));
-
+app.use(cors());
 app.use(express.json());
 app.use('/api/users', userRouter);
 app.use('/api/services', serviceRouter);
@@ -24,6 +20,7 @@ app.use('/api/favorites', favoriteRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/reviews', reviewRouter);
 
-app.listen(() => {
-  console.log('Server running on Vercel!');
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
