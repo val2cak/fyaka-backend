@@ -9,9 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.ts",
-    "build": "tsc",
-    "vercel-build": "npm install && prisma format && prisma generate && npx prisma db push && npx prisma db seed && npm run build",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "build": "npm install && prisma format && prisma generate && npx prisma db push && npx prisma db seed && tsc"
   },
   "repository": {
     "type": "git",
