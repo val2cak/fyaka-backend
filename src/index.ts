@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 import { userRouter } from './user/user.router';
 import { serviceRouter } from './service/service.router';
@@ -14,6 +15,18 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use(
+  '/api/geonames',
+  createProxyMiddleware({
+    target: 'http://api.geonames.org',
+    changeOrigin: true,
+    pathRewrite: {
+      '^/api/geonames': '/',
+    },
+  })
+);
+
 app.use('/api/users', userRouter);
 app.use('/api/services', serviceRouter);
 app.use('/api/favorites', favoriteRouter);

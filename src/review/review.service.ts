@@ -87,3 +87,5 @@ export const countReviews = async (userId: number): Promise<number> => {
   const count = await db.review.count({ where });
   return count;
 };
+
+prisma.$disconnect();
