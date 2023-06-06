@@ -20,7 +20,7 @@ app.use('/api/favorites', favoriteRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/reviews', reviewRouter);
 
-const port = parseInt(process.env.PORT as string, 10) || 443;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// const port = parseInt(process.env.PORT as string, 10) || 443;
+app.listen(() => {
+  console.log(`Server running on render`);
 });
